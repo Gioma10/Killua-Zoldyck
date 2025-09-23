@@ -1,6 +1,18 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Orbitron } from "next/font/google";
+import { Anton } from "next/font/google";
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["400", "700"], // scegli i pesi che ti servono
+});
+
+const anton = Anton({
+  subsets: ["latin"],
+  weight: ["400"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${anton.className} antialiased`}
       >
         {children}
       </body>

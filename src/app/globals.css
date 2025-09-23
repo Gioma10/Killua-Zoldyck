@@ -1,9 +1,8 @@
 @import "tailwindcss";
-@plugin "daisyui";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #a8ddfd;
+  --foreground: #edd9dc;
 }
 
 @theme inline {
@@ -15,13 +14,31 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #a8ddfd;
+    --foreground: #edd9dc;
   }
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
+  background-color: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  /* background: linear-gradient(180deg, #1f2a65, #a8ddfd);
+  background-size: 400% 400%;
+
+  -webkit-animation: bg-gradient 37s ease infinite;
+  -moz-animation: bg-gradient 37s ease infinite;
+  animation: bg-gradient 37s ease infinite; */
+}
+
+/* @font-face {
+  font-family: Muhaqu ;
+  src: url('../fonts/muhaqu-regular-font/MuhaquRegularpersonaluse-0neG.otf');
+} */
+
+h1{
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-color: white;
+  -webkit-text-stroke-width: 2px;
+  font-family: Muhaqu;
 }
