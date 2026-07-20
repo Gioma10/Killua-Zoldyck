@@ -5,9 +5,10 @@ import Image from "next/image";
 import Kil from "../assets/Killua.png";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import ScrollToPlugin from "gsap/ScrollToPlugin";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 const Hero = () => {
   const killuaRef = useRef<HTMLDivElement>(null);
@@ -20,7 +21,7 @@ const Hero = () => {
     if (killuaRef.current) {
       gsap.set(killuaRef.current, { y: 0, x: 0 }); // posizione iniziale
       gsap.to(killuaRef.current, {
-        ease: "none",
+        
         scrollTrigger: {
           trigger: killuaRef.current, // trigger sull'intero container
           endTrigger: containerRef.current?.nextElementSibling,
@@ -28,8 +29,11 @@ const Hero = () => {
           end: "bottom bottom",
           pinSpacing: false,
           pin: true,
-          scrub: true,
+          scrub: 0.6,
           invalidateOnRefresh: true, // ricalcola posizioni su refresh/resize
+          onLeave: () => {
+            gsap.to(window, { duration: 1, scrollTo: "#about" });
+          },
         },
       });
     }
@@ -39,24 +43,22 @@ const Hero = () => {
       gsap.set(titleKRef.current, { x: 0 });
       gsap.set(titleZRef.current, { x: 0 });
       gsap.to(titleKRef.current, {
-        x: -350, // si muove meno di Killua
-        ease: "none",
+        x: -100, // si muove meno di Killua
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top end",
-          end: "bottom top",
-          scrub: true,
+          end: "200px top",
+          scrub: 0.6,
           invalidateOnRefresh: true,
         },
       });
       gsap.to(titleZRef.current, {
-        x: 350, // si muove meno di Killua
-        ease: "none",
+        x: 100, // si muove meno di Killua
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top end",
-          end: "bottom top",
-          scrub: true,
+          end: "200px top",
+          scrub: 0.6,
           invalidateOnRefresh: true,
         },
       });
