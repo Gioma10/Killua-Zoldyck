@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import Scene from "./Scene";
 
 const AboutMe = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
