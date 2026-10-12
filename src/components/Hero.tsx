@@ -5,10 +5,9 @@ import Image from "next/image";
 import Kil from "../assets/Killua.png";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import ScrollToPlugin from "gsap/ScrollToPlugin";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
   const killuaRef = useRef<HTMLDivElement>(null);
@@ -24,16 +23,12 @@ const Hero = () => {
         
         scrollTrigger: {
           trigger: killuaRef.current, // trigger sull'intero container
-          endTrigger: containerRef.current?.nextElementSibling,
           start: "top end",
-          end: "bottom bottom",
+          end: () => `+=${window.innerHeight * 0.3}`,
           pinSpacing: false,
           pin: true,
           scrub: 0.6,
           invalidateOnRefresh: true, // ricalcola posizioni su refresh/resize
-          onLeave: () => {
-            gsap.to(window, { duration: 1, scrollTo: "#about" });
-          },
         },
       });
     }
