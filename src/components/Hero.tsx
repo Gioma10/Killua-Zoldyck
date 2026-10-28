@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import Kil from "../assets/Killua.png";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -79,7 +78,13 @@ const Hero = () => {
         ref={killuaRef}
         className="flex justify-center items-end absolute h-full w-64 md:w-96"
       >
-        <Image src={Kil} alt="Killua" className="w-full" />
+        <Image
+          src="/hero/Killua.png"
+          alt="Killua"
+          width={736}
+          height={1472}
+          className="w-full"
+        />
       </div>
     </div>
   );

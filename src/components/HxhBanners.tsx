@@ -1,6 +1,7 @@
 "use client";
 
-import LogoHxH from "../assets/hxh.png";
+// Il logo sta in public/hero/hxh.png (660x404).
+const LOGO_SRC = "/hero/hxh.png";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
@@ -35,18 +36,20 @@ export default function HxhBanners() {
               {Array.from({ length: 20 }, (_, i) => (
                 <Image
                   key={i}
-                  src={LogoHxH}
+                  src={LOGO_SRC}
                   alt="Logo HunterxHunter"
                   width={100}
+                  height={61}
                   className="w-16 md:w-[100px]"
                 />
               ))}
               {Array.from({ length: 20 }, (_, i) => (
                 <Image
                   key={i + 20}
-                  src={LogoHxH}
+                  src={LOGO_SRC}
                   alt="Logo HunterxHunter"
                   width={100}
+                  height={61}
                   className="w-16 md:w-[100px]"
                 />
               ))}
@@ -57,18 +60,20 @@ export default function HxhBanners() {
               {Array.from({ length: 20 }, (_, i) => (
                 <Image
                   key={i}
-                  src={LogoHxH}
+                  src={LOGO_SRC}
                   alt="Logo HunterxHunter"
                   width={100}
+                  height={61}
                   className="w-16 md:w-[100px]"
                 />
               ))}
               {Array.from({ length: 20 }, (_, i) => (
                 <Image
                   key={i + 20}
-                  src={LogoHxH}
+                  src={LOGO_SRC}
                   alt="Logo HunterxHunter"
                   width={100}
+                  height={61}
                   className="w-16 md:w-[100px]"
                 />
               ))}

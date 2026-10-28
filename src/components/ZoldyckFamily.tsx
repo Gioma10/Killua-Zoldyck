@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import Kil from "../assets/Killua.png";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -71,7 +70,7 @@ const FAMILY_MEMBERS: FamilyMember[] = [
   },
   {
     name: "Killua",
-    image: Kil.src,
+    image: "/hero/Killua.png",
     role: "Il terzo figlio",
     description:
       "L'erede scelto dalla famiglia. Scappa di casa per diventare Hunter insieme al suo amico Gon.",
@@ -677,6 +676,7 @@ export default function ZoldyckFamily() {
                         className="member-card absolute inset-x-0 top-0 rounded-xl border border-rose/40 bg-linear-to-t from-wine via-transparent via-40% opacity-0"
                         style={{ height: PHOTO_H }}
                       />
+
 
                       <div
                         className="member-text absolute inset-x-0 pt-4"
