@@ -29,8 +29,8 @@ export default function HxhBanners() {
     { scope: containerRef }
   );
   return (
-        <div ref={containerRef} className="relative -translate-y-32 h-52 w-full overflow-hidden">
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] overflow-hidden border bg-[#F9F2E0] p-2 -rotate-6 pointer-events-none z-10">
+        <div ref={containerRef} className="relative -translate-y-32 h-52 w-full">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] overflow-hidden border bg-[#F9F2E0] p-1 md:p-2 -rotate-6 pointer-events-none z-10">
             <div ref={firstContainerLogosRef} className="flex logo-track w-[200%]">
               {Array.from({ length: 20 }, (_, i) => (
                 <Image
@@ -38,6 +38,7 @@ export default function HxhBanners() {
                   src={LogoHxH}
                   alt="Logo HunterxHunter"
                   width={100}
+                  className="w-16 md:w-[100px]"
                 />
               ))}
               {Array.from({ length: 20 }, (_, i) => (
@@ -46,11 +47,12 @@ export default function HxhBanners() {
                   src={LogoHxH}
                   alt="Logo HunterxHunter"
                   width={100}
+                  className="w-16 md:w-[100px]"
                 />
               ))}
             </div>
           </div>
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] overflow-hidden border bg-[#F9F2E0] p-2 rotate-6 pointer-events-none z-0">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] overflow-hidden border bg-[#F9F2E0] p-1 md:p-2 rotate-6 pointer-events-none z-0">
             <div ref={secondContainerLogosRef} className="flex logo-track w-[200%]">
               {Array.from({ length: 20 }, (_, i) => (
                 <Image
@@ -58,6 +60,7 @@ export default function HxhBanners() {
                   src={LogoHxH}
                   alt="Logo HunterxHunter"
                   width={100}
+                  className="w-16 md:w-[100px]"
                 />
               ))}
               {Array.from({ length: 20 }, (_, i) => (
@@ -66,6 +69,7 @@ export default function HxhBanners() {
                   src={LogoHxH}
                   alt="Logo HunterxHunter"
                   width={100}
+                  className="w-16 md:w-[100px]"
                 />
               ))}
             </div>

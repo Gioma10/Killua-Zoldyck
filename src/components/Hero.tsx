@@ -63,9 +63,9 @@ const Hero = () => {
   return (
     <div
       ref={containerRef}
-      className="mx-20 h-screen flex justify-center items-center relative"
+      className="h-screen flex justify-center items-center relative"
     >
-      <h1 className="text-9xl ps-10 flex gap-10 text-center text-white mt-20 uppercase">
+      <h1 className="flex gap-[3vw] text-[15vw] leading-none whitespace-nowrap uppercase text-ink">
         <span className="inline-block" ref={titleKRef}>
           Killua
         </span>
@@ -77,7 +77,7 @@ const Hero = () => {
 
       <div
         ref={killuaRef}
-        className="flex justify-center items-end absolute h-full w-96"
+        className="flex justify-center items-end absolute h-full w-64 md:w-96"
       >
         <Image src={Kil} alt="Killua" className="w-full" />
       </div>

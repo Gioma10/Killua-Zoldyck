@@ -1,6 +1,7 @@
 import Hero from "@/components/Hero";
 import HxhBanners from "@/components/HxhBanners";
-import { AboutMe } from "./AboutMe";
+import ZoldyckFamily from "@/components/ZoldyckFamily";
+// import { AboutMe } from "./AboutMe";
 
 export default function Home() {
   return (
@@ -13,9 +14,11 @@ export default function Home() {
       <HxhBanners />
       </div>
 
-      <div>
+      {/* <div>
         <AboutMe/>
-      </div>
+      </div> */}
+
+      <ZoldyckFamily />
     </main>
   );
 }

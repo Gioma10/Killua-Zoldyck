@@ -1,22 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #a8ddfd;
-  --foreground: #edd9dc;
+  /* Palette presa dai colori dell'immagine di Killua nella hero.
+     Ogni sezione usa uno di questi come sfondo. */
+  --steel: #8fa3b5; /* grigio-azzurro della giacca: sfondo della hero */
+  --wine: #2a1b26; /* ombre scure dei pantaloni: sfondo della famiglia */
+  --ink: #241820; /* testo scuro sugli sfondi chiari */
+  --cream: #f6efe2; /* maglietta e strisce HxH: testo sugli sfondi scuri */
+  --rose: #e0778c; /* rosso della scritta sulla maglietta, schiarito: dettagli */
+
+  --background: var(--steel);
+  --foreground: var(--cream);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-steel: var(--steel);
+  --color-wine: var(--wine);
+  --color-ink: var(--ink);
+  --color-cream: var(--cream);
+  --color-rose: var(--rose);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #a8ddfd;
-    --foreground: #edd9dc;
-  }
 }
 
 body {
@@ -38,9 +44,10 @@ body {
   src: url('../fonts/muhaqu-regular-font/MuhaquRegularpersonaluse-0neG.otf');
 } */
 
+/* Vecchio stile del titolo della hero (solo contorno bianco).
 h1{
   -webkit-text-fill-color: transparent;
   -webkit-text-stroke-color: white;
   -webkit-text-stroke-width: 2px;
   font-family: Muhaqu;
-}
+} */
