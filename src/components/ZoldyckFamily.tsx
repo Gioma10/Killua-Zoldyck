@@ -4,111 +4,79 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { useTranslations } from "next-intl";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const SURNAME = "ZOLDYCK";
 
-// Misure di una scheda in "pixel dell'albero". Non sono i pixel dello schermo:
-// la telecamera ingrandisce o rimpicciolisce tutto l'albero in base allo schermo,
-// quindi le misure qui dentro restano sempre in proporzione.
-const NODE_W = 240; // larghezza di una scheda (e della carta)
-const PHOTO_H = 360; // altezza della foto (e della carta)
-const NODE_H = 540; // altezza di una scheda, foto + testi
-const LINE_GAP = 12; // spazio tra la fine di una linea e la foto o la carta
+// Sizes of a member box in "tree pixels". They are not screen pixels:
+// the camera zooms the whole tree in or out based on the screen,
+// so the sizes in here always stay in proportion.
+const NODE_W = 240; // width of a member box (and of the card)
+const PHOTO_H = 360; // height of the photo (and of the card)
+const NODE_H = 540; // height of a member box, photo + text
+const LINE_GAP = 12; // space between the end of a line and the photo or card
 
+// Role, description and Nen type are in messages/*.json, under ZoldyckFamily.members.
 type FamilyMember = {
   name: string;
-  role: string;
-  description: string;
-  // Percorso della foto dentro public/, ad esempio "/zoldyck-family/zeno.webp".
+  // Path of the photo inside public/, for example "/zoldyck-family/zeno.webp".
   image: string;
-  nen: string; // il tipo di Nen, si legge sul retro della carta
 };
 
-// L'ordine conta: è l'ordine in cui i membri compaiono mentre scrolli.
+// The order matters: it's the order in which members appear as you scroll.
 const FAMILY_MEMBERS: FamilyMember[] = [
   {
     name: "Zeno",
     image: "/zoldyck-family/zeno.webp",
-    role: "Il nonno",
-    description:
-      "Ex capofamiglia e assassino leggendario. In combattimento il suo Nen prende la forma di un drago.",
-    nen: "Trasformazione",
   },
   {
     name: "Silva",
     image: "/zoldyck-family/silva.webp",
-    role: "Il padre",
-    description:
-      "L'attuale capofamiglia. Killua ha preso da lui i capelli bianchi e il talento.",
-    nen: "Emissione",
   },
   {
     name: "Kikyo",
     image: "/zoldyck-family/kikyo.webp",
-    role: "La madre",
-    description:
-      "Porta sempre un visore sugli occhi. Sogna che Killua diventi il più grande assassino della famiglia.",
-    nen: "Sconosciuto",
   },
   {
     name: "Illumi",
     image: "/zoldyck-family/illumi.webp",
-    role: "Il primo figlio",
-    description:
-      "Freddo e senza emozioni. Usa degli aghi per controllare le persone, anche suo fratello.",
-    nen: "Manipolazione",
   },
   {
     name: "Milluki",
     image: "/zoldyck-family/milluki.webp",
-    role: "Il secondo figlio",
-    description:
-      "Il genio dei computer. Preferisce restare chiuso in casa tra schermi e collezioni.",
-    nen: "Sconosciuto",
   },
   {
     name: "Killua",
     image: "/hero/Killua.png",
-    role: "Il terzo figlio",
-    description:
-      "L'erede scelto dalla famiglia. Scappa di casa per diventare Hunter insieme al suo amico Gon.",
-    nen: "Trasformazione",
   },
   {
     name: "Alluka",
     image: "/zoldyck-family/alluka.webp",
-    role: "La quarta figlia",
-    description:
-      "Custodisce un potere misterioso che la famiglia teme. Killua è l'unico che la protegge.",
-    nen: "Sconosciuto",
   },
   {
     name: "Kalluto",
     image: "/zoldyck-family/kalluto.webp",
-    role: "Il più piccolo",
-    description: "Veste sempre un kimono e combatte con ventagli di carta.",
-    nen: "Manipolazione",
   },
 ];
 
-// Le due "modalità" di ogni scheda:
-// - PHOTO: il personaggio con la descrizione sotto, mentre scorri;
-// - CARD: alla fine diventa una carta, con il testo dentro.
+// The two "modes" of each member box:
+// - PHOTO: the character with the description below, while you scroll;
+// - CARD: at the end it becomes a card, with the text inside.
 type Mode = {
-  rowGap: number; // distanza tra la cima di una generazione e la successiva
-  w: number; // larghezza di quello che si vede (le linee si fermano prima)
-  h: number; // altezza di quello che si vede
+  rowGap: number; // distance between the top of one generation and the next
+  w: number; // width of what you see (the lines stop before it)
+  h: number; // height of what you see
 };
 
-const PHOTO: Mode = { rowGap: 660, w: PHOTO_H / 2, h: PHOTO_H + 130 }; // le foto sono 1:2
+const PHOTO: Mode = { rowGap: 660, w: PHOTO_H / 2, h: PHOTO_H + 130 }; // the photos are 1:2
 const CARD: Mode = { rowGap: 440, w: NODE_W, h: PHOTO_H };
 
-// Le due "forme" dell'albero:
-// - WIDE: schermi larghi (computer, iPad orizzontale), i figli tutti in fila;
-// - TALL: schermi alti (telefono, iPad verticale), i figli su due file.
-// Per ogni membro: centro orizzontale (x) e fila (row: 0 = nonno, 1 = genitori...).
+// The two "shapes" of the tree:
+// - WIDE: wide screens (computer, landscape iPad), all the children in one row;
+// - TALL: tall screens (phone, portrait iPad), the children on two rows.
+// For each member: horizontal center (x) and row (row: 0 = grandfather, 1 = parents...).
 type Shape = {
   width: number;
   rows: number;
@@ -150,9 +118,9 @@ const spot = (shape: Shape, mode: Mode, name: string) => ({
   top: shape.spots[name].row * mode.rowGap,
 });
 
-// Una linea va dal punto "from" al punto "to" ed è sempre dritta
-// (orizzontale o verticale). Si disegna partendo da "from".
-// "before" è il membro che compare subito dopo che la linea è disegnata.
+// A line goes from point "from" to point "to" and is always straight
+// (horizontal or vertical). It is drawn starting from "from".
+// "before" is the member that appears right after the line is drawn.
 type TreeLine = {
   id: string;
   from: [number, number];
@@ -160,17 +128,17 @@ type TreeLine = {
   before: string;
 };
 
-// Calcola tutte le linee a partire da dove stanno le schede.
-// Ogni linea si ferma a LINE_GAP dalla foto o dalla carta: non la tocca mai.
+// Works out all the lines from where the member boxes are.
+// Each line stops LINE_GAP away from the photo or card: it never touches it.
 const treeLines = (shape: Shape, mode: Mode): TreeLine[] => {
   const zeno = spot(shape, mode, "Zeno");
   const silva = spot(shape, mode, "Silva");
   const kikyo = spot(shape, mode, "Kikyo");
-  const marriageY = silva.top + PHOTO_H / 2; // a metà delle foto di Silva e Kikyo
-  const middle = (silva.x + kikyo.x) / 2; // da qui scendono i figli
+  const marriageY = silva.top + PHOTO_H / 2; // halfway down the photos of Silva and Kikyo
+  const middle = (silva.x + kikyo.x) / 2; // the children come down from here
 
   const lines: TreeLine[] = [
-    // Arriva dall'alto, come se l'albero continuasse con gli antenati.
+    // Comes from above, as if the tree went on with the ancestors.
     {
       id: "zeno-in",
       from: [zeno.x, -400],
@@ -183,7 +151,7 @@ const treeLines = (shape: Shape, mode: Mode): TreeLine[] => {
       to: [silva.x, silva.top - LINE_GAP],
       before: "Silva",
     },
-    // Il matrimonio: da fianco a fianco, tra Silva e Kikyo.
+    // The marriage: side to side, between Silva and Kikyo.
     {
       id: "marriage",
       from: [silva.x + mode.w / 2 + LINE_GAP, marriageY],
@@ -192,9 +160,9 @@ const treeLines = (shape: Shape, mode: Mode): TreeLine[] => {
     },
   ];
 
-  // I figli, fila per fila. Per ogni fila: il tronco scende dal centro
-  // fino a una sbarra orizzontale; la sbarra si allunga verso ogni figlio
-  // e da lì una linea corta scende fino alla sua scheda.
+  // The children, row by row. For each row: the trunk goes down from the center
+  // to a horizontal bar; the bar stretches toward each child
+  // and from there a short line goes down to their box.
   const children = FAMILY_MEMBERS.slice(3).map((m) => m.name);
   const childRows = [...new Set(children.map((n) => shape.spots[n].row))];
   let stemTop = marriageY;
@@ -210,7 +178,7 @@ const treeLines = (shape: Shape, mode: Mode): TreeLine[] => {
       before: names[0],
     });
 
-    // Fin dove è già arrivata la sbarra, a sinistra e a destra del tronco.
+    // How far the bar has already reached, left and right of the trunk.
     let left = middle;
     let right = middle;
     names.forEach((name) => {
@@ -246,7 +214,7 @@ const treeLines = (shape: Shape, mode: Mode): TreeLine[] => {
   return lines;
 };
 
-// Posizione e misure del div che disegna la linea (spesso 2px).
+// Position and size of the div that draws the line (2px thick).
 const lineBox = ({ from: [x1, y1], to: [x2, y2] }: TreeLine) => ({
   left: Math.min(x1, x2) - 1,
   top: Math.min(y1, y2) - 1,
@@ -254,8 +222,8 @@ const lineBox = ({ from: [x1, y1], to: [x2, y2] }: TreeLine) => ({
   height: Math.abs(y2 - y1) || 2,
 });
 
-// Sceglie la forma in base allo schermo: più alto che largo = TALL.
-// Si aggiorna da sola se giri il telefono o cambi la grandezza della finestra.
+// Picks the shape based on the screen: taller than wide = TALL.
+// It updates by itself if you rotate the phone or resize the window.
 function useShape() {
   const [shape, setShape] = useState(WIDE);
   useEffect(() => {
@@ -271,21 +239,25 @@ function useShape() {
 const isHorizontal = (line: TreeLine) => line.from[1] === line.to[1];
 
 export default function ZoldyckFamily() {
+  const t = useTranslations("ZoldyckFamily");
+  // A member's text in the current language, e.g. text(member, "role").
+  const text = (member: FamilyMember, field: "role" | "description" | "nen") =>
+    t(`members.${member.name.toLowerCase()}.${field}`);
   const sectionRef = useRef<HTMLElement>(null);
   const treeRef = useRef<HTMLDivElement>(null);
   const shape = useShape();
   const lines = treeLines(shape, PHOTO);
   const cardsHeight = (shape.rows - 1) * CARD.rowGap + PHOTO_H;
-  // true quando l'albero è diventato carte: solo allora si può giocare con le carte.
+  // true when the tree has turned into cards: only then can you play with the cards.
   const cardsReady = useRef(false);
-  // La carta girata in questo momento (al massimo una).
+  // The card that is flipped right now (at most one).
   const openCard = useRef<HTMLElement | null>(null);
 
   const { contextSafe } = useGSAP(
     () => {
-      // 1. Lo sfondo di tutta la pagina passa dal grigio-azzurro al vino scuro
-      //    mentre la sezione sale dal fondo dello schermo fino in cima.
-      // I colori arrivano dalla palette in globals.css.
+      // 1. The background of the whole page goes from blue-gray to dark wine
+      //    while the section rises from the bottom of the screen to the top.
+      // The colors come from the palette in globals.css.
       const palette = getComputedStyle(document.documentElement);
       const color = (name: string) => palette.getPropertyValue(name).trim();
 
@@ -297,22 +269,22 @@ export default function ZoldyckFamily() {
           ease: "none",
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top bottom", // la cima della sezione tocca il fondo dello schermo
-            end: "top top", // la cima della sezione tocca la cima dello schermo
+            start: "top bottom", // the top of the section touches the bottom of the screen
+            end: "top top", // the top of the section touches the top of the screen
             scrub: true,
           },
         },
       );
 
-      // La "telecamera": sposta e ingrandisce l'albero in modo che il punto
-      // (x, y) dell'albero finisca al centro dello schermo.
-      // Sono funzioni, così GSAP le ricalcola se la finestra cambia grandezza.
+      // The "camera": moves and zooms the tree so that the point
+      // (x, y) of the tree ends up in the center of the screen.
+      // They are functions, so GSAP recalculates them if the window is resized.
       const camera = (x: number, y: number, scale: () => number) => ({
         x: () => window.innerWidth / 2 - x * scale(),
         y: () => window.innerHeight / 2 - y * scale(),
         scale,
       });
-      // Da vicino: grandezza piena, ma rimpicciolisce se lo schermo è basso o stretto.
+      // Close up: full size, but it shrinks if the screen is short or narrow.
       const closeUp = () =>
         Math.min(
           1,
@@ -320,19 +292,19 @@ export default function ZoldyckFamily() {
           window.innerWidth / (NODE_W + 80),
         );
 
-      // 2. La sezione resta ferma sullo schermo e, mentre scrolli,
-      //    prima compare il titolo, poi l'albero si costruisce un membro alla volta.
+      // 2. The section stays still on the screen and, as you scroll,
+      //    first the title appears, then the tree builds up one member at a time.
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=9000", // quanti pixel di scroll dura la sezione
+          end: "+=9000", // how many pixels of scroll the section lasts
           pin: true,
           scrub: 1,
-          invalidateOnRefresh: true, // ricalcola le misure se la finestra cambia grandezza
+          invalidateOnRefresh: true, // recalculates the sizes if the window is resized
         },
-        // A ogni passo dell'animazione controlla se siamo arrivati alla fine.
-        // La classe "cards-ready" sull'albero fa comparire la manina sulle carte.
+        // On every step of the animation, checks whether we have reached the end.
+        // The "cards-ready" class on the tree shows the hand cursor on the cards.
         onUpdate: () => {
           cardsReady.current = tl.progress() > 0.99;
           treeRef.current!.classList.toggle("cards-ready", cardsReady.current);
@@ -342,7 +314,7 @@ export default function ZoldyckFamily() {
       tl.from(".family-label", { opacity: 0, y: 40 })
         .from(".letter", { opacity: 0, y: 80, stagger: 0.1 })
         .from(".family-intro", { opacity: 0, y: 40 })
-        // Il titolo esce dall'alto.
+        // The title leaves through the top.
         .to(
           ".family-header",
           { y: () => -window.innerHeight, ease: "none", duration: 1 },
@@ -353,7 +325,7 @@ export default function ZoldyckFamily() {
         const { x, top } = spot(shape, PHOTO, member.name);
         const focus = camera(x, top + NODE_H / 2, closeUp);
 
-        // La telecamera va sul membro (sul primo ci salta, senza viaggio).
+        // The camera goes to the member (it jumps straight to the first one, no travel).
         if (i === 0) tl.set(treeRef.current, focus);
         else
           tl.to(treeRef.current, {
@@ -362,8 +334,8 @@ export default function ZoldyckFamily() {
             duration: 1,
           });
 
-        // Le linee che portano a questo membro si disegnano una dopo l'altra:
-        // la prima parte insieme alla telecamera ("<"), le altre in fila.
+        // The lines leading to this member are drawn one after the other:
+        // the first starts together with the camera ("<"), the others in a row.
         lines
           .filter((line) => line.before === member.name)
           .forEach((line, j) => {
@@ -376,13 +348,13 @@ export default function ZoldyckFamily() {
             );
           });
 
-        // Poi compare la scheda.
+        // Then the member box appears.
         tl.from(`.member-${member.name}`, { opacity: 0, y: 40, duration: 0.6 });
       });
 
-      // 3. Alla fine ogni scheda diventa una carta e la telecamera
-      //    si allontana per mostrare tutto l'albero. Tutto insieme ("<").
-      // Da lontano: quanto basta per far entrare l'albero di carte.
+      // 3. At the end each member box becomes a card and the camera
+      //    pulls back to show the whole tree. All at once ("<").
+      // From far away: just enough to fit the tree of cards.
       const overview = () =>
         Math.min(
           window.innerWidth / shape.width,
@@ -399,63 +371,63 @@ export default function ZoldyckFamily() {
         "+=0.5",
       );
 
-      // Le generazioni si avvicinano...
+      // The generations move closer...
       FAMILY_MEMBERS.forEach((member) => {
         const { top } = spot(shape, CARD, member.name);
         tl.to(`.member-${member.name}`, { top, duration: 1.5 }, "<");
       });
-      // ...e le linee si accorciano per seguirle.
+      // ...and the lines get shorter to follow them.
       treeLines(shape, CARD).forEach((line) => {
         tl.to(`.line-${line.id}`, { ...lineBox(line), duration: 1.5 }, "<");
       });
 
-      // Compaiono cornice e sfumatura della carta.
+      // The card's border and fade appear.
       tl.to(".member-card", { opacity: 1, duration: 1 }, "<")
-        // La descrizione sparisce e si chiude (altezza 0)...
+        // The description disappears and closes up (height 0)...
         .to(
           ".member-description",
           { opacity: 0, height: 0, marginTop: 0, duration: 0.8 },
           "<",
         )
-        // ...così il testo può salire dentro la carta, appoggiato in basso:
-        // yPercent -100 lo alza di tutta la sua altezza.
+        // ...so the text can move up inside the card, resting at the bottom:
+        // yPercent -100 lifts it by its full height.
         .to(".member-text", { yPercent: -100, y: -12, x: 12, duration: 1 }, "<")
-        // Da lontano i nomi diventano più grandi, così sul telefono si leggono.
+        // From far away the names get bigger, so you can read them on a phone.
         .to(
           ".member-name",
           { fontSize: () => `${Math.max(30, 12 / overview())}px`, duration: 1 },
           "<",
         )
-        // Sul telefono il ruolo sarebbe troppo piccolo: sparisce.
+        // On a phone the role would be too small: it disappears.
         .to(
           ".member-role",
           { opacity: () => (overview() < 0.5 ? 0 : 1), duration: 1 },
           "<",
         );
 
-      // Se scrolli con una carta girata, la carta torna al suo posto.
+      // If you scroll while a card is flipped, the card goes back to its place.
       const onScroll = () => {
         if (openCard.current) closeCard(openCard.current);
       };
       window.addEventListener("scroll", onScroll);
       return () => window.removeEventListener("scroll", onScroll);
     },
-    // Se la forma cambia (giri il telefono), l'animazione si rifà da capo.
+    // If the shape changes (you rotate the phone), the animation starts over.
     { scope: sectionRef, dependencies: [shape], revertOnUpdate: true },
   );
 
-  // --- Le carte si possono usare con il mouse ---
-  // Ogni carta è fatta di 3 strati, uno dentro l'altro, e ognuno fa una cosa sola:
-  // - member-zoom: porta la carta al centro dello schermo e la ingrandisce;
-  // - member-tilt: inclina la carta verso il mouse;
-  // - member-flip: gira la carta per mostrare il retro.
+  // --- The cards can be used with the mouse ---
+  // Each card is made of 3 layers, one inside the other, and each does one thing only:
+  // - member-zoom: brings the card to the center of the screen and makes it bigger;
+  // - member-tilt: tilts the card toward the mouse;
+  // - member-flip: flips the card to show the back.
   const layer = (card: HTMLElement, name: string) =>
     card.querySelector<HTMLElement>(`.member-${name}`)!;
 
-  // Il mouse si muove sopra la carta: la carta si inclina verso di lui
-  // e un riflesso di luce lo segue.
-  // L'effetto c'è solo su schermi larghi con un mouse vero:
-  // sul telefono (forma TALL) o sui touch, toccare la carta la gira e basta.
+  // The mouse moves over the card: the card tilts toward it
+  // and a light reflection follows it.
+  // The effect is only on wide screens with a real mouse:
+  // on a phone (TALL shape) or touch screens, tapping the card just flips it.
   const canTilt = () =>
     shape === WIDE &&
     window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -464,25 +436,25 @@ export default function ZoldyckFamily() {
     if (!cardsReady.current || openCard.current || !canTilt()) return;
     const tilt = layer(e.currentTarget, "tilt");
     const rect = tilt.getBoundingClientRect();
-    // Dove sta il mouse dentro la carta, da 0 (sinistra/alto) a 1 (destra/basso).
+    // Where the mouse is inside the card, from 0 (left/top) to 1 (right/bottom).
     const px = (e.clientX - rect.left) / rect.width;
     const py = (e.clientY - rect.top) / rect.height;
 
     gsap.to(tilt, {
-      rotationY: (px - 0.5) * 30, // massimo 15 gradi per lato
+      rotationY: (px - 0.5) * 30, // at most 15 degrees per side
       rotationX: (0.5 - py) * 30,
       scale: 1.06,
-      transformPerspective: 800, // quanto è "profonda" l'inclinazione
+      transformPerspective: 800, // how "deep" the tilt is
       duration: 0.4,
       ease: "power2.out",
     });
-    // Il riflesso usa queste due variabili CSS per sapere dove disegnarsi.
+    // The reflection uses these two CSS variables to know where to draw itself.
     tilt.style.setProperty("--mx", `${px * 100}%`);
     tilt.style.setProperty("--my", `${py * 100}%`);
     gsap.to(layer(e.currentTarget, "glare"), { opacity: 1, duration: 0.3 });
   });
 
-  // Il mouse esce dalla carta: torna dritta e il riflesso sparisce.
+  // The mouse leaves the card: it goes back straight and the reflection disappears.
   const onCardLeave = contextSafe((e: React.PointerEvent<HTMLElement>) => {
     if (openCard.current === e.currentTarget) return;
     gsap.to(layer(e.currentTarget, "tilt"), {
@@ -495,18 +467,18 @@ export default function ZoldyckFamily() {
     gsap.to(layer(e.currentTarget, "glare"), { opacity: 0, duration: 0.3 });
   });
 
-  // Gira la carta e la porta, grande, al centro dello schermo.
+  // Flips the card and brings it, big, to the center of the screen.
   const showCard = contextSafe((card: HTMLElement) => {
     const tree = treeRef.current!;
     const treeScale = gsap.getProperty(tree, "scale") as number;
-    // Dove sta ora il centro della carta sullo schermo.
+    // Where the center of the card is on the screen right now.
     const screenX =
       (gsap.getProperty(tree, "x") as number) +
       (card.offsetLeft + NODE_W / 2) * treeScale;
     const screenY =
       (gsap.getProperty(tree, "y") as number) +
       (card.offsetTop + PHOTO_H / 2) * treeScale;
-    // Quanto ingrandirla: alta il 70% dello schermo, ma mai più larga dell'85%.
+    // How much to enlarge it: 70% of the screen height, but never wider than 85%.
     const zoom =
       Math.min(
         (window.innerHeight * 0.7) / PHOTO_H,
@@ -514,7 +486,7 @@ export default function ZoldyckFamily() {
       ) / treeScale;
 
     openCard.current = card;
-    card.style.zIndex = "20"; // davanti a tutte le altre carte
+    card.style.zIndex = "20"; // in front of all the other cards
     gsap.to(layer(card, "tilt"), {
       rotationX: 0,
       rotationY: 0,
@@ -523,8 +495,8 @@ export default function ZoldyckFamily() {
     });
     gsap.to(layer(card, "glare"), { opacity: 0, duration: 0.3 });
     gsap.to(layer(card, "zoom"), {
-      // Lo spostamento si divide per treeScale perché la carta sta dentro l'albero,
-      // che è già rimpicciolito dalla telecamera.
+      // The movement is divided by treeScale because the card is inside the tree,
+      // which the camera has already shrunk.
       x: (window.innerWidth / 2 - screenX) / treeScale,
       y: (window.innerHeight / 2 - screenY) / treeScale,
       scale: zoom,
@@ -540,7 +512,7 @@ export default function ZoldyckFamily() {
     gsap.to(".family-backdrop", { autoAlpha: 1, duration: 0.5 });
   });
 
-  // Rigira la carta e la rimette al suo posto nell'albero.
+  // Flips the card back and puts it back in its place in the tree.
   const closeCard = contextSafe((card: HTMLElement) => {
     openCard.current = null;
     gsap.to(layer(card, "zoom"), {
@@ -577,7 +549,7 @@ export default function ZoldyckFamily() {
       <div className="family-header absolute inset-0 flex flex-col items-center justify-center gap-8 text-center px-6">
         <h2 className="flex flex-col items-center leading-none">
           <span className="family-label text-[5vw] uppercase tracking-[0.2em]">
-            La famiglia
+            {t("label")}
           </span>
           <span className="flex text-[18vw]">
             {SURNAME.split("").map((letter, i) => (
@@ -589,13 +561,11 @@ export default function ZoldyckFamily() {
         </h2>
 
         <p className="family-intro text-xl max-w-2xl">
-          La famiglia di assassini più temuta al mondo. Vivono nella dimora sul
-          monte Kukuroo e ogni figlio viene addestrato a uccidere fin da
-          bambino. Killua è il terzo figlio.
+          {t("intro")}
         </p>
       </div>
 
-      {/* Il foglio dell'albero: la telecamera lo muove partendo dall'angolo in alto a sinistra. */}
+      {/* The tree sheet: the camera moves it starting from the top left corner. */}
       <div
         ref={treeRef}
         className="absolute left-0 top-0 origin-top-left"
@@ -613,16 +583,16 @@ export default function ZoldyckFamily() {
               className={`line-${line.id} absolute bg-cream/40`}
               style={{
                 ...lineBox(line),
-                // La linea cresce dal lato di "from".
+                // The line grows from the "from" side.
                 transformOrigin: `${x2 < x1 ? "right" : "left"} ${y2 < y1 ? "bottom" : "top"}`,
               }}
             />
           );
         })}
 
-        {/* Velo scuro dietro la carta girata. È enorme perché sta dentro l'albero,
-            che si sposta e si rimpicciolisce: così copre sempre tutto lo schermo.
-            Cliccandolo la carta si chiude. */}
+        {/* Dark veil behind the flipped card. It's huge because it's inside the tree,
+            which moves and shrinks: this way it always covers the whole screen.
+            Clicking it closes the card. */}
         <div
           className="family-backdrop invisible absolute -inset-[4000px] z-10 bg-wine/80 opacity-0"
           onClick={() => openCard.current && closeCard(openCard.current)}
@@ -630,7 +600,7 @@ export default function ZoldyckFamily() {
 
         {FAMILY_MEMBERS.map((member) => {
           const { x, top } = spot(shape, PHOTO, member.name);
-          // Il centro della carta: da qui la carta si ingrandisce, si inclina e si gira.
+          // The center of the card: from here the card grows, tilts and flips.
           const cardCenter = { transformOrigin: `50% ${PHOTO_H / 2}px` };
           return (
             <article
@@ -652,16 +622,16 @@ export default function ZoldyckFamily() {
                     className="member-flip relative transform-3d"
                     style={cardCenter}
                   >
-                    {/* --- Davanti --- */}
+                    {/* --- Front --- */}
                     <div className="relative backface-hidden">
-                      {/* Sfondo della carta, dietro al personaggio. Invisibile finché non diventa carta. */}
+                      {/* Card background, behind the character. Invisible until it becomes a card. */}
                       <div
                         className="member-card absolute inset-x-0 top-0 rounded-xl bg-linear-to-b from-cream/5 to-rose/20 opacity-0"
                         style={{ height: PHOTO_H }}
                       />
 
-                      {/* Le immagini sono già scontornate: niente riquadro.
-                In basso sfumano, così il taglio del corpo non si vede. */}
+                      {/* The images already have the background removed: no frame.
+                They fade out at the bottom, so the cut of the body doesn't show. */}
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={member.image}
@@ -670,8 +640,8 @@ export default function ZoldyckFamily() {
                         style={{ height: PHOTO_H }}
                       />
 
-                      {/* Bordo della carta e sfumatura scura in basso, davanti al personaggio,
-                così il nome si legge quando sale dentro la carta. */}
+                      {/* Card border and dark fade at the bottom, in front of the character,
+                so the name is readable when it moves up inside the card. */}
                       <div
                         className="member-card absolute inset-x-0 top-0 rounded-xl border border-rose/40 bg-linear-to-t from-wine via-transparent via-40% opacity-0"
                         style={{ height: PHOTO_H }}
@@ -683,17 +653,17 @@ export default function ZoldyckFamily() {
                         style={{ top: PHOTO_H }}
                       >
                         <p className="member-role text-xs uppercase tracking-[0.3em] text-rose">
-                          {member.role}
+                          {text(member, "role")}
                         </p>
                         <h3 className="member-name text-3xl uppercase">
                           {member.name}
                         </h3>
                         <p className="member-description mt-1 overflow-hidden text-sm text-cream/80">
-                          {member.description}
+                          {text(member, "description")}
                         </p>
                       </div>
 
-                      {/* Riflesso di luce che segue il mouse (posizione da --mx e --my). */}
+                      {/* Light reflection that follows the mouse (position from --mx and --my). */}
                       <div
                         className="member-glare pointer-events-none absolute inset-x-0 top-0 rounded-xl opacity-0 mix-blend-overlay"
                         style={{
@@ -704,28 +674,28 @@ export default function ZoldyckFamily() {
                       />
                     </div>
 
-                    {/* --- Dietro: già girato di 180 gradi, si vede solo quando la carta si gira --- */}
+                    {/* --- Back: already turned 180 degrees, only visible when the card flips --- */}
                     <div
                       className="absolute inset-x-0 top-0 flex flex-col rounded-xl border border-rose/40 bg-linear-to-b from-wine to-ink p-5 backface-hidden rotate-y-180"
                       style={{ height: PHOTO_H }}
                     >
                       <p className="text-[10px] uppercase tracking-[0.3em] text-rose">
-                        {member.role}
+                        {text(member, "role")}
                       </p>
                       <h3 className="text-4xl uppercase leading-none">
                         {member.name}
                       </h3>
                       <div className="my-4 h-px bg-rose/40" />
                       <p className="text-sm leading-snug text-cream/85">
-                        {member.description}
+                        {text(member, "description")}
                       </p>
                       <div className="mt-auto">
                         <p className="text-[10px] uppercase tracking-[0.3em] text-rose">
-                          Tipo di Nen
+                          {t("nenType")}
                         </p>
-                        <p className="text-lg uppercase">{member.nen}</p>
+                        <p className="text-lg uppercase">{text(member, "nen")}</p>
                         <p className="mt-3 text-[9px] uppercase tracking-[0.2em] text-cream/40">
-                          Clicca per chiudere
+                          {t("clickToClose")}
                         </p>
                       </div>
                     </div>

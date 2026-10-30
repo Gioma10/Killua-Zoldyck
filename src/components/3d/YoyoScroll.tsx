@@ -23,11 +23,11 @@ export default function YoyoScroll({ progress }: Props) {
     const discesa = avanzamento * 3;
     const posizioneYoyo = posizioneIniziale - discesa;
 
-    // Il corpo scende e ruota attorno al proprio asse.
+    // The body goes down and spins around its own axis.
     yoyoRef.current.position.y = posizioneYoyo;
     yoyoRef.current.rotation.z = -discesa / 0.15;
 
-    // Il filo resta ancorato in alto.
+    // The string stays anchored at the top.
     const lunghezza = cimaFilo - posizioneYoyo;
 
     filoRef.current.scale.y = lunghezza;

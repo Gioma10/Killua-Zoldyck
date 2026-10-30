@@ -1,0 +1,60 @@
+{
+  "Metadata": {
+    "title": "Killua Zoldyck",
+    "description": "An animated portfolio dedicated to Killua Zoldyck from Hunter x Hunter."
+  },
+  "HxhBanners": {
+    "logoAlt": "Hunter x Hunter logo"
+  },
+  "AboutMe": {
+    "title": "About me"
+  },
+  "ZoldyckFamily": {
+    "label": "The family",
+    "intro": "The most feared family of assassins in the world. They live in their estate on Kukuroo Mountain, and every child is trained to kill from an early age. Killua is the third child.",
+    "nenType": "Nen type",
+    "clickToClose": "Click to close",
+    "members": {
+      "zeno": {
+        "role": "The grandfather",
+        "description": "Former head of the family and a legendary assassin. In battle, his Nen takes the shape of a dragon.",
+        "nen": "Transmutation"
+      },
+      "silva": {
+        "role": "The father",
+        "description": "The current head of the family. Killua got his white hair and his talent from him.",
+        "nen": "Emission"
+      },
+      "kikyo": {
+        "role": "The mother",
+        "description": "Always wears a visor over her eyes. She dreams of Killua becoming the greatest assassin in the family.",
+        "nen": "Unknown"
+      },
+      "illumi": {
+        "role": "The first son",
+        "description": "Cold and emotionless. He uses needles to control people, even his own brother.",
+        "nen": "Manipulation"
+      },
+      "milluki": {
+        "role": "The second son",
+        "description": "The computer genius. He prefers to stay shut in at home among his screens and collections.",
+        "nen": "Unknown"
+      },
+      "killua": {
+        "role": "The third son",
+        "description": "The heir chosen by the family. He runs away from home to become a Hunter with his friend Gon.",
+        "nen": "Transmutation"
+      },
+      "alluka": {
+        "role": "The fourth child",
+        "description": "Holds a mysterious power the family fears. Killua is the only one who protects her.",
+        "nen": "Unknown"
+      },
+      "kalluto": {
+        "role": "The youngest",
+        "description": "Always wears a kimono and fights with paper fans.",
+        "nen": "Manipulation"
+      }
+    }
+  }
+}

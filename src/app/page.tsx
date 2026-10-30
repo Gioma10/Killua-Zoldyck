@@ -8,7 +8,7 @@ export default function Home() {
     <main >
       <div className="overflow-hidden">
 
-      {/* Mantiene la corsa dello scroll per il pin di Killua. */}
+      {/* Keeps the scroll distance for Killua's pin. */}
       <Hero />
       <div className="h-[30vh]" aria-hidden="true" />
       <HxhBanners />

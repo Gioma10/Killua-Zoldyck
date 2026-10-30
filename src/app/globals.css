@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  /* Palette presa dai colori dell'immagine di Killua nella hero.
-     Ogni sezione usa uno di questi come sfondo. */
-  --steel: #8fa3b5; /* grigio-azzurro della giacca: sfondo della hero */
-  --wine: #2a1b26; /* ombre scure dei pantaloni: sfondo della famiglia */
-  --ink: #241820; /* testo scuro sugli sfondi chiari */
-  --cream: #f6efe2; /* maglietta e strisce HxH: testo sugli sfondi scuri */
-  --rose: #e0778c; /* rosso della scritta sulla maglietta, schiarito: dettagli */
+  /* Palette taken from the colors of Killua's image in the hero.
+     Each section uses one of these as its background. */
+  --steel: #8fa3b5; /* blue-gray of the jacket: hero background */
+  --wine: #2a1b26; /* dark shadows of the pants: family background */
+  --ink: #241820; /* dark text on light backgrounds */
+  --cream: #f6efe2; /* t-shirt and HxH stripes: text on dark backgrounds */
+  --rose: #e0778c; /* red of the writing on the t-shirt, lightened: details */
 
   --background: var(--steel);
   --foreground: var(--cream);
@@ -44,7 +44,7 @@ body {
   src: url('../fonts/muhaqu-regular-font/MuhaquRegularpersonaluse-0neG.otf');
 } */
 
-/* Vecchio stile del titolo della hero (solo contorno bianco).
+/* Old style of the hero title (white outline only).
 h1{
   -webkit-text-fill-color: transparent;
   -webkit-text-stroke-color: white;

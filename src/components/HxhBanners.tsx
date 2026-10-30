@@ -1,13 +1,15 @@
 "use client";
 
-// Il logo sta in public/hero/hxh.png (660x404).
+// The logo is in public/hero/hxh.png (660x404).
 const LOGO_SRC = "/hero/hxh.png";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import gsap from "gsap";
 
 export default function HxhBanners() {
+  const t = useTranslations("HxhBanners");
   const containerRef = useRef<HTMLDivElement>(null);
   const firstContainerLogosRef = useRef(null);
   const secondContainerLogosRef = useRef(null);
@@ -37,7 +39,7 @@ export default function HxhBanners() {
                 <Image
                   key={i}
                   src={LOGO_SRC}
-                  alt="Logo HunterxHunter"
+                  alt={t("logoAlt")}
                   width={100}
                   height={61}
                   className="w-16 md:w-[100px]"
@@ -47,7 +49,7 @@ export default function HxhBanners() {
                 <Image
                   key={i + 20}
                   src={LOGO_SRC}
-                  alt="Logo HunterxHunter"
+                  alt={t("logoAlt")}
                   width={100}
                   height={61}
                   className="w-16 md:w-[100px]"
@@ -61,7 +63,7 @@ export default function HxhBanners() {
                 <Image
                   key={i}
                   src={LOGO_SRC}
-                  alt="Logo HunterxHunter"
+                  alt={t("logoAlt")}
                   width={100}
                   height={61}
                   className="w-16 md:w-[100px]"
@@ -71,7 +73,7 @@ export default function HxhBanners() {
                 <Image
                   key={i + 20}
                   src={LOGO_SRC}
-                  alt="Logo HunterxHunter"
+                  alt={t("logoAlt")}
                   width={100}
                   height={61}
                   className="w-16 md:w-[100px]"

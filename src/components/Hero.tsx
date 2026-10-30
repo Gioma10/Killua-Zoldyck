@@ -17,27 +17,27 @@ const Hero = () => {
   useGSAP(() => {
     // Killua parallax
     if (killuaRef.current) {
-      gsap.set(killuaRef.current, { y: 0, x: 0 }); // posizione iniziale
+      gsap.set(killuaRef.current, { y: 0, x: 0 }); // starting position
       gsap.to(killuaRef.current, {
         
         scrollTrigger: {
-          trigger: killuaRef.current, // trigger sull'intero container
+          trigger: killuaRef.current, // trigger on the whole container
           start: "top end",
           end: () => `+=${window.innerHeight * 0.3}`,
           pinSpacing: false,
           pin: true,
           scrub: 0.6,
-          invalidateOnRefresh: true, // ricalcola posizioni su refresh/resize
+          invalidateOnRefresh: true, // recalculates positions on refresh/resize
         },
       });
     }
 
-    // Titolo parallax più leggero
+    // Lighter parallax for the title
     if (titleKRef.current && titleZRef.current) {
       gsap.set(titleKRef.current, { x: 0 });
       gsap.set(titleZRef.current, { x: 0 });
       gsap.to(titleKRef.current, {
-        x: -100, // si muove meno di Killua
+        x: -100, // moves less than Killua
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top end",
@@ -47,7 +47,7 @@ const Hero = () => {
         },
       });
       gsap.to(titleZRef.current, {
-        x: 100, // si muove meno di Killua
+        x: 100, // moves less than Killua
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top end",

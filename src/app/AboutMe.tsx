@@ -1,9 +1,10 @@
 "use client";
 
-// Yoyo 3D messo in pausa: il codice è commentato, non cancellato.
-// I file del modello restano in src/components/3d/ (Yoyo.tsx, YoyoScroll.tsx).
+// 3D yoyo on pause: the code is commented out, not deleted.
+// The model files stay in src/components/3d/ (Yoyo.tsx, YoyoScroll.tsx).
 
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 // import { Suspense } from "react";
 // import { Canvas } from "@react-three/fiber";
 // import gsap from "gsap";
@@ -14,6 +15,7 @@ import { useRef } from "react";
 // gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export const AboutMe = () => {
+  const t = useTranslations("AboutMe");
   const sectionRef = useRef<HTMLElement>(null);
   // const progress = useRef({ value: 0 });
 
@@ -41,7 +43,7 @@ export const AboutMe = () => {
   return (
     <section ref={sectionRef} className="relative h-screen">
       <h2 className="absolute top-10 left-1/2 -translate-x-1/2 z-10 text-5xl font-bold text-slate-900">
-        About me
+        {t("title")}
       </h2>
 
       {/* <Canvas camera={{ position: [0, 0, 10], fov: 45 }}>

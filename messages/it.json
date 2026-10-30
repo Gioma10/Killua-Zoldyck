@@ -1,0 +1,60 @@
+{
+  "Metadata": {
+    "title": "Killua Zoldyck",
+    "description": "Un portfolio animato dedicato a Killua Zoldyck di Hunter x Hunter."
+  },
+  "HxhBanners": {
+    "logoAlt": "Logo Hunter x Hunter"
+  },
+  "AboutMe": {
+    "title": "Chi sono"
+  },
+  "ZoldyckFamily": {
+    "label": "La famiglia",
+    "intro": "La famiglia di assassini più temuta al mondo. Vivono nella dimora sul monte Kukuroo e ogni figlio viene addestrato a uccidere fin da bambino. Killua è il terzo figlio.",
+    "nenType": "Tipo di Nen",
+    "clickToClose": "Clicca per chiudere",
+    "members": {
+      "zeno": {
+        "role": "Il nonno",
+        "description": "Ex capofamiglia e assassino leggendario. In combattimento il suo Nen prende la forma di un drago.",
+        "nen": "Trasformazione"
+      },
+      "silva": {
+        "role": "Il padre",
+        "description": "L'attuale capofamiglia. Killua ha preso da lui i capelli bianchi e il talento.",
+        "nen": "Emissione"
+      },
+      "kikyo": {
+        "role": "La madre",
+        "description": "Porta sempre un visore sugli occhi. Sogna che Killua diventi il più grande assassino della famiglia.",
+        "nen": "Sconosciuto"
+      },
+      "illumi": {
+        "role": "Il primo figlio",
+        "description": "Freddo e senza emozioni. Usa degli aghi per controllare le persone, anche suo fratello.",
+        "nen": "Manipolazione"
+      },
+      "milluki": {
+        "role": "Il secondo figlio",
+        "description": "Il genio dei computer. Preferisce restare chiuso in casa tra schermi e collezioni.",
+        "nen": "Sconosciuto"
+      },
+      "killua": {
+        "role": "Il terzo figlio",
+        "description": "L'erede scelto dalla famiglia. Scappa di casa per diventare Hunter insieme al suo amico Gon.",
+        "nen": "Trasformazione"
+      },
+      "alluka": {
+        "role": "La quarta figlia",
+        "description": "Custodisce un potere misterioso che la famiglia teme. Killua è l'unico che la protegge.",
+        "nen": "Sconosciuto"
+      },
+      "kalluto": {
+        "role": "Il più piccolo",
+        "description": "Veste sempre un kimono e combatte con ventagli di carta.",
+        "nen": "Manipolazione"
+      }
+    }
+  }
+}
